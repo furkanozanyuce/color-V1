@@ -18,14 +18,14 @@ export const GameControls: React.FC<GameControlsProps> = ({
     <div className="flex gap-4 mb-6">
       <button
         onClick={onShuffle}
-        className="p-2 bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
+        className="p-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
         disabled={isShuffling}
       >
         <Shuffle size={24} />
       </button>
       <button
         onClick={onThemeToggle}
-        className="p-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition-colors"
+        className="p-2 text-white rounded-lg bg-blue-500 hover:bg-blue-600 transition-colors"
         aria-label="Toggle theme"
       >
         {isDark ? <Sun size={24} /> : <Moon size={24} />}
