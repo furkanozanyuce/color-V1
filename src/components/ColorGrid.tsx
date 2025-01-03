@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useCallback, useImperativeHandle, useState, useEffect } from 'react';
 import { ColorState } from '../types';
 import { shuffleArray } from '../utils/shuffleUtils';
 
@@ -13,29 +13,42 @@ export interface ColorGridRef {
   shuffle: () => void;
 }
 
+interface Square {
+  id: number;
+  isTarget: boolean;
+}
+
 export const ColorGrid = forwardRef<ColorGridRef, ColorGridProps>(({ 
-  colors, 
+  colors: { baseColor, targetColor, targetIndex, gridSize }, 
   onCorrectGuess, 
   onIncorrectGuess,
   onShuffleStateChange
 }, ref) => {
-  const [squares, setSquares] = useState(() => 
-    Array.from({ length: colors.gridSize * colors.gridSize }).map((_, index) => ({
+  const [squares, setSquares] = useState<Square[]>(() => 
+    Array.from({ length: gridSize * gridSize }).map((_, index) => ({
       id: index,
-      isTarget: index === colors.targetIndex
+      isTarget: index === targetIndex
     }))
   );
   const [isShuffling, setIsShuffling] = useState(false);
 
-  const handleSquareClick = (index: number) => {
-    if (squares[index].isTarget) {
+  useEffect(() => {
+    setSquares(Array.from({ length: gridSize * gridSize }).map((_, index) => ({
+      id: index,
+      isTarget: index === targetIndex
+    })));
+  }, [gridSize, targetIndex]);
+
+  const handleSquareClick = useCallback((square: Square, event: React.MouseEvent<HTMLButtonElement>) => {
+    if (square.isTarget) {
       onCorrectGuess();
     } else {
+      event.currentTarget.blur();
       onIncorrectGuess();
     }
-  };
+  }, [onCorrectGuess, onIncorrectGuess]);
 
-  const shuffle = () => {
+  const shuffle = useCallback(() => {
     setIsShuffling(true);
     onShuffleStateChange(true);
     const newSquares = shuffleArray(squares);
@@ -44,40 +57,33 @@ export const ColorGrid = forwardRef<ColorGridRef, ColorGridProps>(({
       setIsShuffling(false);
       onShuffleStateChange(false);
     }, 500);
-  };
+  }, [squares, onShuffleStateChange]);
 
   useImperativeHandle(ref, () => ({
     shuffle
   }));
 
-  useEffect(() => {
-    setSquares(Array.from({ length: colors.gridSize * colors.gridSize }).map((_, index) => ({
-      id: index,
-      isTarget: index === colors.targetIndex
-    })));
-  }, [colors]);
-
   return (
     <div 
+      key={`${gridSize}-${targetIndex}-${baseColor}`}
       className="grid gap-2"
       style={{ 
-        gridTemplateColumns: `repeat(${colors.gridSize}, 1fr)`,
-        width: 'min(90vw, 800px)',
+        gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
+        width: 'min(90vw, 400px)',
         aspectRatio: '1/1'
       }}
     >
-      {squares.map((square, index) => (
+      {squares.map((square) => (
         <button
           key={square.id}
-          onClick={() => handleSquareClick(index)}
-          className={`w-full h-full rounded-lg hover:opacity-90 focus:outline-none transition-all duration-500 ${
+          onClick={(e) => handleSquareClick(square, e)}
+          className={`w-full h-full rounded-lg hover:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
             isShuffling ? 'animate-shuffle' : ''
           }`}
           style={{
-            backgroundColor: square.isTarget ? colors.targetColor : colors.baseColor,
-            transform: isShuffling ? `rotate(${Math.random() * 360}deg)` : 'none',
+            backgroundColor: square.isTarget ? targetColor : baseColor
           }}
-          aria-label={`Color square ${index + 1}`}
+          aria-label={`Color square ${square.id + 1}`}
           disabled={isShuffling}
         />
       ))}
