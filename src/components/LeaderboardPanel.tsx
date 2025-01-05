@@ -60,7 +60,7 @@ export const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
             onClick={onClose}
           />
           <div className={cn(
-            "md:hidden fixed inset-y-0 right-0 w-80 shadow-lg z-50 animate-slide-in",
+            "xl:hidden fixed inset-y-0 right-0 w-80 shadow-lg z-50 animate-slide-in",
             isDark ? "bg-gray-800 text-white" : "bg-white text-gray-900"
           )}>
             <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
