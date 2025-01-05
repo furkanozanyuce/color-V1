@@ -75,7 +75,7 @@ export const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
                 <X size={20} />
               </button>
             </div>
-            <div className="p-4 overflow-y-auto max-h-[calc(100vh-5rem)]">
+            <div className="overflow-y-auto max-h-[calc(100vh-5rem)]">
               <Content
                 scores={scores}
                 dailyScores={dailyScores}
