@@ -7,6 +7,7 @@ interface ColorGridProps {
   onCorrectGuess: () => void;
   onIncorrectGuess: () => void;
   onShuffleStateChange: (isShuffling: boolean) => void;
+  gameOver: boolean;
 }
 
 export interface ColorGridRef {
@@ -22,7 +23,8 @@ export const ColorGrid = forwardRef<ColorGridRef, ColorGridProps>(({
   colors: { baseColor, targetColor, targetIndex, gridSize }, 
   onCorrectGuess, 
   onIncorrectGuess,
-  onShuffleStateChange
+  onShuffleStateChange,
+  gameOver
 }, ref) => {
   const [squares, setSquares] = useState<Square[]>(() => 
     Array.from({ length: gridSize * gridSize }).map((_, index) => ({
@@ -40,15 +42,19 @@ export const ColorGrid = forwardRef<ColorGridRef, ColorGridProps>(({
   }, [gridSize, targetIndex]);
 
   const handleSquareClick = useCallback((square: Square, event: React.MouseEvent<HTMLButtonElement>) => {
+    if (gameOver) return;
+    
     if (square.isTarget) {
       onCorrectGuess();
     } else {
       event.currentTarget.blur();
       onIncorrectGuess();
     }
-  }, [onCorrectGuess, onIncorrectGuess]);
+  }, [onCorrectGuess, onIncorrectGuess, gameOver]);
 
   const shuffle = useCallback(() => {
+    if (gameOver) return;
+    
     setIsShuffling(true);
     onShuffleStateChange(true);
     const newSquares = shuffleArray(squares);
@@ -57,7 +63,7 @@ export const ColorGrid = forwardRef<ColorGridRef, ColorGridProps>(({
       setIsShuffling(false);
       onShuffleStateChange(false);
     }, 500);
-  }, [squares, onShuffleStateChange]);
+  }, [squares, onShuffleStateChange, gameOver]);
 
   useImperativeHandle(ref, () => ({
     shuffle
@@ -77,14 +83,16 @@ export const ColorGrid = forwardRef<ColorGridRef, ColorGridProps>(({
         <button
           key={square.id}
           onClick={(e) => handleSquareClick(square, e)}
-          className={`w-full h-full rounded-lg hover:scale-95 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
-            isShuffling ? 'animate-shuffle' : ''
-          }`}
+          className={`w-full h-full rounded-lg transition-all duration-200 ${
+            gameOver && square.isTarget 
+              ? 'ring-4 ring-green-500 scale-105 hover:scale-100' 
+              : 'hover:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400'
+          } ${isShuffling ? 'animate-shuffle' : ''}`}
           style={{
             backgroundColor: square.isTarget ? targetColor : baseColor
           }}
           aria-label={`Color square ${square.id + 1}`}
-          disabled={isShuffling}
+          disabled={isShuffling || gameOver}
         />
       ))}
     </div>
