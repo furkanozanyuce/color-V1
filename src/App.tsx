@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Home, Moon, Sun } from 'lucide-react';
 import { ColorGrid, ColorGridRef } from './components/ColorGrid';
-import { GameStatus } from './components/GameStatus';
-import { GameControls } from './components/GameControls';
-import { Timer } from './components/Timer';
+import { GameLayout } from './components/GameLayout';
+import { FullLeaderboard } from './components/FullLeaderboard';
+import { CompactLeaderboard } from './components/CompactLeaderboard';
+import { NicknameModal } from './components/NicknameModal';
 import { useGameState } from './hooks/useGameState';
+import { useGameSession } from './hooks/useGameSession';
 import { useTheme } from './hooks/useTheme';
 import { useTimer } from './hooks/useTimer';
-import { Gamepad2 } from 'lucide-react';
 import { generateColors } from './utils/colorUtils';
 
 export default function App() {
@@ -19,6 +21,18 @@ export default function App() {
     handleIncorrectGuess,
     resetGame,
   } = useGameState();
+
+  const {
+    sessionId,
+    currentSession,
+    topScores,
+    dailyScores,
+    startSession,
+    updateScore,
+    endSession,
+    resetSession,
+    clearSession,
+  } = useGameSession();
 
   const { isDark, toggleTheme } = useTheme();
   const [currentColors, setCurrentColors] = useState(generateColors(level));
@@ -35,50 +49,126 @@ export default function App() {
     setCurrentColors(generateColors(level));
   }, [level]);
 
+  useEffect(() => {
+    if (sessionId) {
+      updateScore(score, level);
+    }
+  }, [score, level, sessionId, updateScore]);
+
+  useEffect(() => {
+    if (gameOver) {
+      endSession();
+    }
+  }, [gameOver, endSession]);
+
   const handleShuffle = () => {
     gridRef.current?.shuffle();
   };
 
+  const handlePlayAgain = async () => {
+    resetGame();
+    await resetSession();
+  };
+
+  const handleGoHome = async () => {
+    await endSession();
+    resetGame();
+    clearSession();
+  };
+
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} flex flex-col items-center justify-center p-4 transition-colors`}>
-      <div className="flex items-center gap-2 mb-8">
-        <Gamepad2 size={32} className="text-blue-400" />
-        <h1 className="text-3xl font-bold">Color Finder</h1>
-      </div>
-      
-      {gameOver ? (
-        <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Game Over!</h2>
-          <p className="mb-4">Final Score: {score}</p>
-          <button
-            onClick={resetGame}
-            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            Play Again
-          </button>
-        </div>
-      ) : (
+    <div className={`min-h-screen ${isDark ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-800'} transition-colors`}>
+      {!sessionId ? (
         <>
-          <GameControls 
-            onThemeToggle={toggleTheme}
-            isDark={isDark}
-            onShuffle={handleShuffle}
-            isShuffling={isShuffling}
-          />
-          <GameStatus level={level} lives={lives} score={score} />
-          <Timer timeLeft={timeLeft} isActive={isTimerActive} />
-          <ColorGrid
-            ref={gridRef}
-            colors={currentColors}
-            onCorrectGuess={handleCorrectGuess}
-            onIncorrectGuess={handleIncorrectGuess}
-            onShuffleStateChange={setIsShuffling}
-          />
-          <p className="mt-8 text-gray-400 text-center max-w-md">
-            Find the square with a slightly different color. You have {lives} {lives === 1 ? 'life' : 'lives'} remaining.
-            {isTimerActive && ' Complete the level before time runs out!'}
-          </p>
+          <FullLeaderboard scores={topScores} dailyScores={dailyScores} isDark={isDark} />
+          <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="w-full max-w-md">
+              <h1 className="text-4xl font-bold text-center mb-2 text-blue-400">Color Find</h1>
+              <p className={`text-center mb-8 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                Test your color perception skills
+              </p>
+              
+              <div className={`rounded-lg p-6 mb-8 ${isDark ? 'bg-gray-800/50' : 'bg-white shadow-lg'}`}>
+                <h2 className="text-xl font-semibold mb-4">How to Play:</h2>
+                <ul className={`space-y-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                  <li>• Find the different colored square</li>
+                  <li>• 3 attempts per level</li>
+                  <li>• Colors get more similar as you progress</li>
+                  <li>• Time limits appear at high levels</li>
+                </ul>
+              </div>
+
+              <NicknameModal onStart={startSession} isDark={isDark} />
+              
+              <div className="mt-8 text-center">
+                <button
+                  onClick={toggleTheme}
+                  className="p-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
+                  aria-label="Toggle theme"
+                >
+                  {isDark ? <Sun size={20} /> : <Moon size={20} />}
+                </button>
+              </div>
+            </div>
+          </div>
         </>
+      ) : (
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <CompactLeaderboard 
+            scores={topScores} 
+            dailyScores={dailyScores}
+            currentSessionId={sessionId}
+            isDark={isDark}
+          />
+          
+          <div className="w-full max-w-2xl flex flex-col items-center">
+            {gameOver ? (
+              <div className="text-center">
+                <h1 className="text-4xl font-bold text-blue-400 mb-4">Game Over!</h1>
+                <div className="mb-8">
+                  <p className="text-xl mb-2">Final Score: {score}</p>
+                  <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    You reached Level {level}
+                  </p>
+                </div>
+                <div className="flex gap-4 justify-center">
+                  <button
+                    onClick={handlePlayAgain}
+                    className="bg-blue-500 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-blue-600 transition-colors"
+                  >
+                    Play Again
+                  </button>
+                  <button
+                    onClick={handleGoHome}
+                    className={`px-8 py-3 rounded-lg text-lg font-medium transition-colors flex items-center gap-2 ${
+                      isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'
+                    }`}
+                  >
+                    <Home size={20} />
+                    Home
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <GameLayout
+                isDark={isDark}
+                level={level}
+                lives={lives}
+                score={score}
+                timeLeft={timeLeft}
+                isTimerActive={isTimerActive}
+                isShuffling={isShuffling}
+                currentColors={currentColors}
+                gridRef={gridRef}
+                onThemeToggle={toggleTheme}
+                onShuffle={handleShuffle}
+                onCorrectGuess={handleCorrectGuess}
+                onIncorrectGuess={handleIncorrectGuess}
+                onShuffleStateChange={setIsShuffling}
+              />
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

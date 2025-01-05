@@ -25,7 +25,7 @@ export const GameControls: React.FC<GameControlsProps> = ({
       </button>
       <button
         onClick={onThemeToggle}
-        className="p-2 text-white rounded-lg bg-blue-500 hover:bg-blue-600 transition-colors"
+        className="p-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
         aria-label="Toggle theme"
       >
         {isDark ? <Sun size={24} /> : <Moon size={24} />}
