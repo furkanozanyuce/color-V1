@@ -130,74 +130,73 @@ export default function App() {
         </div>
       ) : (
         <div className="relative min-h-screen flex items-center justify-center p-4">
-          {gameOver ? (
-            <div className="text-center">
-              <h1 className="text-4xl font-bold text-blue-400 mb-4">Game Over!</h1>
-              <div className="mb-8">
-                <p className="text-xl mb-2">Final Score: {score}</p>
-                <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  You reached Level {level}
-                </p>
-              </div>
-              <div className="flex gap-4 justify-center">
-                <button
-                  onClick={handlePlayAgain}
-                  className="bg-blue-500 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-blue-600 transition-colors"
-                >
-                  Play Again
-                </button>
-                <button
-                  onClick={handleGoHome}
-                  className={`px-8 py-3 rounded-lg text-lg font-medium transition-colors flex items-center gap-2 ${
-                    isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'
-                  }`}
-                >
-                  <Home size={20} />
-                  Home
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="w-full max-w-2xl flex flex-col items-center">
-                <GameLayout
-                  isDark={isDark}
-                  level={level}
-                  lives={lives}
-                  score={score}
-                  timeLeft={timeLeft}
-                  isTimerActive={isTimerActive}
-                  isShuffling={isShuffling}
-                  currentColors={currentColors}
-                  gridRef={gridRef}
-                  onThemeToggle={toggleTheme}
-                  onShuffle={handleShuffle}
-                  onCorrectGuess={handleCorrectGuess}
-                  onIncorrectGuess={handleIncorrectGuess}
-                  onShuffleStateChange={setIsShuffling}
-                />
-              </div>
+          <div className="w-full max-w-2xl flex flex-col items-center">
+            <GameLayout
+              isDark={isDark}
+              level={level}
+              lives={lives}
+              score={score}
+              timeLeft={timeLeft}
+              isTimerActive={isTimerActive}
+              isShuffling={isShuffling}
+              currentColors={currentColors}
+              gridRef={gridRef}
+              onThemeToggle={toggleTheme}
+              onShuffle={handleShuffle}
+              onCorrectGuess={handleCorrectGuess}
+              onIncorrectGuess={handleIncorrectGuess}
+              onShuffleStateChange={setIsShuffling}
+              gameOver={gameOver}
+            />
 
-              {/* Mobile Leaderboard Toggle */}
-              <button
-                onClick={() => setShowLeaderboard(!showLeaderboard)}
-                className="md:hidden fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg z-50 hover:bg-blue-600 transition-colors"
-                aria-label="Toggle leaderboard"
-              >
-                <Trophy size={24} />
-              </button>
+            {gameOver && (
+              <div className="mt-8 text-center">
+                <h1 className="text-4xl font-bold text-blue-400 mb-4">Game Over!</h1>
+                <div className="mb-8">
+                  <p className="text-xl mb-2">Final Score: {score}</p>
+                  <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    You reached Level {level}
+                  </p>
+                </div>
+                <div className="flex gap-4 justify-center">
+                  <button
+                    onClick={handlePlayAgain}
+                    className="bg-blue-500 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-blue-600 transition-colors"
+                  >
+                    Play Again
+                  </button>
+                  <button
+                    onClick={handleGoHome}
+                    className={`px-8 py-3 rounded-lg text-lg font-medium transition-colors flex items-center gap-2 ${
+                      isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'
+                    }`}
+                  >
+                    <Home size={20} />
+                    Home
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
-              <LeaderboardPanel
-                isOpen={showLeaderboard}
-                onClose={() => setShowLeaderboard(false)}
-                scores={topScores}
-                dailyScores={dailyScores}
-                currentSessionId={sessionId}
-                isDark={isDark}
-                variant="compact"
-              />
-            </>
-          )}
+          {/* Mobile Leaderboard Toggle */}
+          <button
+            onClick={() => setShowLeaderboard(!showLeaderboard)}
+            className="md:hidden fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg z-50 hover:bg-blue-600 transition-colors"
+            aria-label="Toggle leaderboard"
+          >
+            <Trophy size={24} />
+          </button>
+
+          <LeaderboardPanel
+            isOpen={showLeaderboard}
+            onClose={() => setShowLeaderboard(false)}
+            scores={topScores}
+            dailyScores={dailyScores}
+            currentSessionId={sessionId}
+            isDark={isDark}
+            variant="compact"
+          />
         </div>
       )}
     </div>

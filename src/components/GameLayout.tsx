@@ -20,6 +20,7 @@ interface GameLayoutProps {
   onCorrectGuess: () => void;
   onIncorrectGuess: () => void;
   onShuffleStateChange: (state: boolean) => void;
+  gameOver: boolean;
 }
 
 export const GameLayout: React.FC<GameLayoutProps> = ({
@@ -37,6 +38,7 @@ export const GameLayout: React.FC<GameLayoutProps> = ({
   onCorrectGuess,
   onIncorrectGuess,
   onShuffleStateChange,
+  gameOver,
 }) => {
   return (
     <>
@@ -59,6 +61,7 @@ export const GameLayout: React.FC<GameLayoutProps> = ({
         onCorrectGuess={onCorrectGuess}
         onIncorrectGuess={onIncorrectGuess}
         onShuffleStateChange={onShuffleStateChange}
+        gameOver={gameOver}
       />
       <p className="mt-8 text-gray-400 text-center max-w-md">
         Find the square with a slightly different color. You have {lives} {lives === 1 ? 'life' : 'lives'} remaining.
