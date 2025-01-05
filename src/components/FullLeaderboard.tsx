@@ -27,13 +27,13 @@ export const FullLeaderboard: React.FC<FullLeaderboardProps> = ({
       isDark ? "bg-gray-800 text-white" : "bg-white text-gray-900"
     )}>
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col gap-2 justify-between mb-4">
           <h2 className="font-bold text-lg">Leaderboard</h2>
           <div className="flex gap-1">
             <button
               onClick={() => setActiveTab('daily')}
               className={cn(
-                'px-3 py-1 rounded text-sm',
+                'px-3 py-1 rounded text-sm flex items-center',
                 activeTab === 'daily' 
                   ? 'bg-blue-500 text-white' 
                   : isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'
@@ -45,7 +45,7 @@ export const FullLeaderboard: React.FC<FullLeaderboardProps> = ({
             <button
               onClick={() => setActiveTab('allTime')}
               className={cn(
-                'px-3 py-1 rounded text-sm',
+                'px-3 py-1 rounded text-sm flex items-center',
                 activeTab === 'allTime'
                   ? 'bg-blue-500 text-white'
                   : isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'

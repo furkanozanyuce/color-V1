@@ -112,7 +112,7 @@ export default function App() {
           {/* Mobile Leaderboard Toggle */}
           <button
             onClick={() => setShowLeaderboard(!showLeaderboard)}
-            className="md:hidden fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg z-50 hover:bg-blue-600 transition-colors"
+            className="xl:hidden fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg z-50 hover:bg-blue-600 transition-colors"
             aria-label="Toggle leaderboard"
           >
             <Trophy size={24} />
@@ -182,7 +182,7 @@ export default function App() {
           {/* Mobile Leaderboard Toggle */}
           <button
             onClick={() => setShowLeaderboard(!showLeaderboard)}
-            className="md:hidden fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg z-50 hover:bg-blue-600 transition-colors"
+            className="xl:hidden fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg z-50 hover:bg-blue-600 transition-colors"
             aria-label="Toggle leaderboard"
           >
             <Trophy size={24} />

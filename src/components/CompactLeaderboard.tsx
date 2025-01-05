@@ -55,7 +55,7 @@ export const CompactLeaderboard: React.FC<CompactLeaderboardProps> = ({
           <button
             onClick={() => setActiveTab('daily')}
             className={cn(
-              'px-3 py-1 rounded text-sm',
+              'px-3 py-1 rounded text-sm flex items-center',
               activeTab === 'daily' 
                 ? 'bg-blue-500 text-white' 
                 : isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'
@@ -67,7 +67,7 @@ export const CompactLeaderboard: React.FC<CompactLeaderboardProps> = ({
           <button
             onClick={() => setActiveTab('allTime')}
             className={cn(
-              'px-3 py-1 rounded text-sm',
+              'px-3 py-1 rounded text-sm flex items-center',
               activeTab === 'allTime'
                 ? 'bg-blue-500 text-white'
                 : isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'

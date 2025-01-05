@@ -32,7 +32,7 @@ export const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
     <>
       {/* Desktop fixed sidebar */}
       <div className={cn(
-        "hidden md:block fixed top-4 left-4 w-80",
+        "hidden xl:block fixed top-4 left-4 w-80",
         variant === 'compact' && "shadow-lg rounded-lg overflow-hidden",
         isDark ? "bg-gray-800 text-white" : "bg-white text-gray-900"
       )}>
@@ -56,7 +56,7 @@ export const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
       {isOpen && (
         <>
           <div 
-            className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            className="xl:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
             onClick={onClose}
           />
           <div className={cn(
